@@ -1,64 +1,59 @@
-![](./resources/official_armmbed_example_badge.png)
-# Blinky Mbed OS example
+# PSoC 6 MCU: PDM-to-PCM Example for Mbed OS
 
-The example project is part of the [Arm Mbed OS Official Examples](https://os.mbed.com/code/) and is the [getting started example for Mbed OS](https://os.mbed.com/docs/mbed-os/v5.14/quick-start/index.html). It contains an application that repeatedly blinks an LED on supported [Mbed boards](https://os.mbed.com/platforms/).
+This example demonstrates how to use the pulse-density modulation/pulse-code modulation (PDM/PCM) hardware block in PSoC® 6 MCU with a digital microphone.
 
-You can build the project with all supported [Mbed OS build tools](https://os.mbed.com/docs/mbed-os/latest/tools/index.html). However, this example project specifically refers to the command-line interface tool [Arm Mbed CLI](https://github.com/ARMmbed/mbed-cli#installing-mbed-cli).
-(Note: To see a rendered example you can import into the Arm Online Compiler, please see our [import quick start](https://os.mbed.com/docs/mbed-os/latest/quick-start/online-with-the-online-compiler.html#importing-the-code).)
+## Overview
+This code example shows how to use a digital microphone with the PDM/PCM block. It measures the sound intensity (volume), and turns ON an LED when the volume exceeds a threshold. You can reset the threshold by pressing a switch; you can use this to capture the environment noise and set a new threshold above the noise. A debug UART reports the current volume.
 
-1. [Install Mbed CLI](https://os.mbed.com/docs/mbed-os/latest/quick-start/offline-with-mbed-cli.html).
+## Base project
+This example was ported from [ModusToolbox PSoC6 PDM-PCM Example](https://github.com/cypresssemiconductorco/mtb-example-psoc6-pdm-pcm). It is based on version v1.0.0 which uses Cypress Peripheral Driver Library (PDL), not the newer Cypress Hardware Abstraction Layer (HAL).
 
-1. Clone this repository on your system, and change the current directory to where the project was cloned:
+## Requirements
 
-    ```bash
-    $ git clone git@github.com:armmbed/mbed-os-example-blinky && cd mbed-os-example-blinky
-    ```
+- [Mbed CLI](https://github.com/ARMmbed/mbed-cli)
 
-    Alternatively, you can download the example project with Arm Mbed CLI using the `import` subcommand:
+## Supported Kits (Target Names)
+- CY8CPROTO-062-4343W [PSoC 6 Wi-Fi BT Prototyping Kit](https://www.cypress.com/CY8CPROTO-062-4343W) (CY8CPROTO_062_4343W)
 
-    ```bash
-    $ mbed import mbed-os-example-blinky && cd mbed-os-example-blinky
-    ```
+## Hardware Setup
 
+This example uses the board's default configuration. See the kit user guide to ensure that the board is configured correctly.
 
-## Application functionality
+**Note**: The PSoC 6 BLE Pioneer Kit and the PSoC 6 WiFi-BT Pioneer Kit ship with KitProg2 installed. ModusToolbox software requires KitProg3. Before using this code example, make sure that the board is upgraded to KitProg3. The tool and instructions are available in the [Firmware Loader](https://github.com/cypresssemiconductorco/Firmware-loader) GitHub repository. If you do not upgrade, you will see an error like "unable to find CMSIS-DAP device" or "KitProg firmware is out of date".
 
-The `main()` function is the single thread in the application. It toggles the state of a digital output connected to an LED on the board.
+## Software Setup
 
-## Building and running
+Install a terminal emulator if you don't have one. Instructions in this document use [Tera Term](https://ttssh2.osdn.jp/index.html.en).
 
-1. Connect a USB cable between the USB port on the board and the host computer.
-2. <a name="build_cmd"></a> Run the following command to build the example project and program the microcontroller flash memory:
-    ```bash
-    $ mbed compile -m <TARGET> -t <TOOLCHAIN> --flash
-    ```
-The binary is located at `./BUILD/<TARGET>/<TOOLCHAIN>/mbed-os-example-blinky.bin`.
+## Using the Code Example in Mbed CLI Tools
 
-Alternatively, you can manually copy the binary to the board, which you mount on the host computer over USB.
+1. Import the code example into your mbed directory using the following mbed command:
 
-Depending on the target, you can build the example project with the `GCC_ARM`, `ARM` or `IAR` toolchain. After installing Arm Mbed CLI, run the command below to determine which toolchain supports your target:
+   ```
+   mbed import https://github.com/maclobdell/mbed-os-example-cy-mic
+   ```
+   (Temporary Home)
 
-```bash
-$ mbed compile -S
-```
+2. Change the working directory to the code example folder:
 
-## Expected output
-The LED on your target turns on and off every 500 milliseconds.
+   ```
+   cd mbed-os-example-cy-mic
+   ```
 
+3. Connect the board to your PC using the provided USB cable through the USB connector.
 
-## Troubleshooting
-If you have problems, you can review the [documentation](https://os.mbed.com/docs/latest/tutorials/debugging.html) for suggestions on what could be wrong and how to fix it.
+4. Put the kit in DAPLink mode to allow programming from Mbed CLI. See [Firmware-loader](https://github.com/cypresssemiconductorco/Firmware-loader) to learn to update the firmware and switch to DAPLink mode.
 
-## Related Links
+5. Compile the code and program the target board:
 
-* [Mbed OS Stats API](https://os.mbed.com/docs/latest/apis/mbed-statistics.html).
-* [Mbed OS Configuration](https://os.mbed.com/docs/latest/reference/configuration.html).
-* [Mbed OS Serial Communication](https://os.mbed.com/docs/latest/tutorials/serial-communication.html).
-* [Mbed OS bare metal](https://os.mbed.com/docs/mbed-os/latest/reference/mbed-os-bare-metal.html).
-* [Mbed boards](https://os.mbed.com/platforms/).
+   ```
+   mbed compile --target CY8CPROTO_062_4343W --toolchain GCC_ARM --flash --sterm
+   ```
 
-### License and contributions
+   **Note:** With the `--sterm` option, Mbed CLI opens a serial terminal with 9600-8N1 as the setting after programming completes. Do not use this option if you want to connect using another serial terminal application.
 
-The software is provided under Apache-2.0 license. Contributions to this project are accepted under the same license. Please see contributing.md for more info.
+## Operation
 
-This project contains code from other projects. The original license text is included in those source files. They must comply with our license guide.
+1. After programming, touch, speak, or play any sound over the microphone. Observe that the kit's LED turns ON.
+
+1. If the LED is always ON or blinking, without playing any sound over the microphone, press the kit's button to reset the noise threshold.
