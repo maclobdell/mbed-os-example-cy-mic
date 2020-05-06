@@ -2,7 +2,7 @@
 * File Name:   main.c
 *
 * Description: This is the source code for the PDM PCM Example
-*              for ModusToolbox.
+*              for Mbed OS.
 *
 * Related Document: See Readme.md
 *
@@ -43,7 +43,6 @@
 #include "cy_pdl.h"
 #include "cyhal.h"
 #include "cybsp.h"
-//#include "cy_retarget_io.h"
 
 #include "stdlib.h"
 
@@ -65,7 +64,6 @@ InterruptIn sw1(CYBSP_USER_BTN);
 /*******************************************************************************
 * Function Prototypes
 ********************************************************************************/
-//void button_isr_handler(void *callback_arg, cyhal_gpio_event_t event);
 void button_isr_handler(void);
 void pdm_pcm_isr_handler(void);
 
@@ -116,27 +114,10 @@ int main(void)
 
     /* Initialize the device and board peripherals */
     cybsp_init() ;
-//    if (result != CY_RSLT_SUCCESS)
-//    {
-//        CY_ASSERT(0);
-//    }
-
-    /* Enable global interrupts */
-//    __enable_irq();
-
-    /* Initialize retarget-io to use the debug UART port */
-//    cy_retarget_io_init(CYBSP_DEBUG_UART_TX, CYBSP_DEBUG_UART_RX, CY_RETARGET_IO_BAUDRATE);
-
-    /* Initialize the User LED */
-//initialized above
-//    cyhal_gpio_init(CYBSP_USER_LED, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, CYBSP_LED_STATE_OFF);
 
     /* Initialize the User Button */
-//    cyhal_gpio_init(CYBSP_USER_BTN, CYHAL_GPIO_DIR_INPUT, CYHAL_GPIO_DRIVE_PULLUP, CYBSP_BTN_OFF);
-//    cyhal_gpio_enable_event(CYBSP_USER_BTN, CYHAL_GPIO_IRQ_FALL, CYHAL_ISR_PRIORITY_DEFAULT, true);
-//    cyhal_gpio_register_callback(CYBSP_USER_BTN, button_isr_handler, NULL);
-      sw1.mode(PullUp);
-      sw1.fall(button_isr_handler);
+    sw1.mode(PullUp);
+    sw1.fall(button_isr_handler);
 
     /* Initialize the PDM/PCM interrupt (PDL) */
     Cy_SysInt_Init(&pdm_pcm_isr_cfg, pdm_pcm_isr_handler);
@@ -223,8 +204,6 @@ int main(void)
             printf("\n\rNoise threshold: %lu\n\r", (uint32_t) noise_threshold);
         }
 
-//        cyhal_system_sleep();
-
     }
 }
 
@@ -239,12 +218,8 @@ int main(void)
 *  event: event that occured
 *
 *******************************************************************************/
-//void button_isr_handler(void *callback_arg, cyhal_gpio_event_t event)
 void button_isr_handler(void)
 {
-    //(void) callback_arg;
-    //(void) event;
-
     button_flag = true;
 }
 
